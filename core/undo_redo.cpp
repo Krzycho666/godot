@@ -282,6 +282,7 @@ void UndoRedo::undo() {
 		return; //nothing to redo
 	_process_operation_list(actions[current_action].undo_ops.front());
 	current_action--;
+	version--;
 }
 
 void UndoRedo::clear_history() {
@@ -292,7 +293,7 @@ void UndoRedo::clear_history() {
 	while(actions.size())
 		_pop_history_tail();
 
-	version++;
+	//version++;
 }
 
 String UndoRedo::get_current_action_name() const {
@@ -326,7 +327,7 @@ void UndoRedo::set_commit_notify_callback(CommitNotifyCallback p_callback,void* 
 
 UndoRedo::UndoRedo() {
 
-	version=0;
+	version=1;
 	action_level=0;
 	current_action=-1;
 	max_steps=-1;
@@ -342,7 +343,7 @@ UndoRedo::~UndoRedo() {
 
 Variant UndoRedo::_add_do_method(const Variant** p_args, int p_argcount, Variant::CallError& r_error) {
 
-	if (p_argcount<1) {
+	if (p_argcount<2) {
 		r_error.error=Variant::CallError::CALL_ERROR_TOO_FEW_ARGUMENTS;
 		r_error.argument=0;
 		return Variant();
@@ -381,7 +382,7 @@ Variant UndoRedo::_add_do_method(const Variant** p_args, int p_argcount, Variant
 
 Variant UndoRedo::_add_undo_method(const Variant** p_args, int p_argcount, Variant::CallError& r_error) {
 
-	if (p_argcount<1) {
+	if (p_argcount<2) {
 		r_error.error=Variant::CallError::CALL_ERROR_TOO_FEW_ARGUMENTS;
 		r_error.argument=0;
 		return Variant();
@@ -454,8 +455,8 @@ void UndoRedo::_bind_methods() {
 		ObjectTypeDB::bind_native_method(METHOD_FLAGS_DEFAULT,"add_undo_method",&UndoRedo::_add_undo_method,mi,defargs);
 	}
 
-	ObjectTypeDB::bind_method(_MD("add_do_property","object", "property", "value"),&UndoRedo::add_do_property);
-	ObjectTypeDB::bind_method(_MD("add_undo_property","object", "property", "value"),&UndoRedo::add_undo_property);
+	ObjectTypeDB::bind_method(_MD("add_do_property","object", "property", "value:var"),&UndoRedo::add_do_property);
+	ObjectTypeDB::bind_method(_MD("add_undo_property","object", "property", "value:var"),&UndoRedo::add_undo_property);
 	ObjectTypeDB::bind_method(_MD("add_do_reference","object"),&UndoRedo::add_do_reference);
 	ObjectTypeDB::bind_method(_MD("add_undo_reference","object"),&UndoRedo::add_undo_reference);
 	ObjectTypeDB::bind_method(_MD("clear_history"),&UndoRedo::clear_history);
