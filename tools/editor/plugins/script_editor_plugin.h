@@ -33,6 +33,7 @@
 #include "scene/gui/tab_container.h"
 #include "scene/gui/text_edit.h"
 #include "scene/gui/menu_button.h"
+#include "scene/gui/tool_button.h"
 #include "scene/gui/tree.h"
 #include "scene/main/timer.h"
 #include "script_language.h"
@@ -105,6 +106,8 @@ public:
 
 };
 
+class EditorScriptCodeCompletionCache;
+
 class ScriptEditor : public VBoxContainer {
 
 	OBJ_TYPE(ScriptEditor, VBoxContainer );
@@ -165,6 +168,7 @@ class ScriptEditor : public VBoxContainer {
 	GotoLineDialog *goto_line_dialog;
 	ConfirmationDialog *erase_tab_confirm;
 	ScriptEditorDebugger* debugger;
+	ToolButton *scripts_visible;
 
 	void _tab_changed(int p_which);
 	void _menu_option(int p_optin);
@@ -189,6 +193,7 @@ class ScriptEditor : public VBoxContainer {
 
 	ScriptEditorQuickOpen *quick_open;
 
+	EditorScriptCodeCompletionCache *completion_cache;
 
 	void _editor_play();
 	void _editor_pause();
@@ -246,6 +251,7 @@ public:
 	void get_window_layout(Ref<ConfigFile> p_layout);
 
 	ScriptEditor(EditorNode *p_editor);
+	~ScriptEditor();
 };
 
 class ScriptEditorPlugin : public EditorPlugin {

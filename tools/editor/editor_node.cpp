@@ -92,6 +92,7 @@
 #include "plugins/navigation_polygon_editor_plugin.h"
 #include "plugins/light_occluder_2d_editor_plugin.h"
 #include "plugins/color_ramp_editor_plugin.h"
+#include "plugins/collision_shape_2d_editor_plugin.h"
 // end
 #include "tools/editor/io_plugins/editor_texture_import_plugin.h"
 #include "tools/editor/io_plugins/editor_scene_import_plugin.h"
@@ -3046,7 +3047,7 @@ Error EditorNode::load_scene(const String& p_scene) {
 
 	//_cleanup_scene(); // i'm sorry but this MUST happen to avoid modified resources to not be reloaded.
 
-	Ref<PackedScene> sdata = ResourceLoader::load(lpath);
+	Ref<PackedScene> sdata = ResourceLoader::load(lpath,"",true);
 	if (!sdata.is_valid()) {
 
 		current_option=-1;
@@ -3062,6 +3063,8 @@ Error EditorNode::load_scene(const String& p_scene) {
 		}
 		return ERR_FILE_NOT_FOUND;
 	}
+
+	sdata->set_path(lpath,true); //take over path
 
 	Node*new_scene=sdata->instance(true);
 
@@ -4273,7 +4276,7 @@ EditorNode::EditorNode() {
 	//dock_select_popoup->set_(Size2(20,20));
 
 	for(int i=0;i<DOCK_SLOT_MAX;i++) {
-		dock_slot[i]->set_custom_minimum_size(Size2(250,250));
+		dock_slot[i]->set_custom_minimum_size(Size2(230,220));
 		dock_slot[i]->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 		dock_slot[i]->set_popup(dock_select_popoup);
 		dock_slot[i]->connect("pre_popup_pressed",this,"_dock_pre_popup",varray(i));
@@ -5051,6 +5054,7 @@ EditorNode::EditorNode() {
 	add_editor_plugin( memnew( LightOccluder2DEditorPlugin(this) ) );
 	add_editor_plugin( memnew( NavigationPolygonEditorPlugin(this) ) );
 	add_editor_plugin( memnew( ColorRampEditorPlugin(this) ) );
+	add_editor_plugin( memnew( CollisionShape2DEditorPlugin(this) ) );
 
 	for(int i=0;i<EditorPlugins::get_plugin_count();i++)
 		add_editor_plugin( EditorPlugins::create(i,this) );
